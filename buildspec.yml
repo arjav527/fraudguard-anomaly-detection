@@ -1,0 +1,26 @@
+version: 0.2
+
+env:
+  variables:
+    IMAGE_REPO_NAME: fraudguard-anomaly
+    IMAGE_TAG: latest
+
+phases:
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR"
+      - aws --version
+      - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
+
+  build:
+    commands:
+      - echo "Building Docker image"
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+
+  post_build:
+    commands:
+      - echo "Pushing Docker image to ECR"
+      - docker push $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - echo "Phase 2 completed: Image pushed to ECR"
