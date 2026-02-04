@@ -1,26 +1,25 @@
 version: 0.2
 
-env:
-  variables:
-    IMAGE_REPO_NAME: fraudguard-anomaly
-    IMAGE_TAG: latest
-
 phases:
   pre_build:
     commands:
       - echo "Logging in to Amazon ECR"
       - aws --version
-      - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
+      - docker --version
+      - export ACCOUNT_ID=915233244358
+      - export REGION=us-east-1
+      - export REPO_NAME=fraudguard-anomaly
+      - export IMAGE_TAG=latest
+      - aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
 
   build:
     commands:
       - echo "Building Docker image"
-      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
-      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - docker build -t $REPO_NAME:$IMAGE_TAG .
+      - docker tag $REPO_NAME:$IMAGE_TAG $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG
 
   post_build:
     commands:
-      - echo "Pushing Docker image to ECR"
-      - docker push $ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
-      - echo "Phase 2 completed: Image pushed to ECR"
+      - echo "Pushing image to ECR"
+      - docker push $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/$REPO_NAME:$IMAGE_TAG
+      - echo "PHASE 2 COMPLETED SUCCESSFULLY"
