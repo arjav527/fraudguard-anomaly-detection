@@ -1,0 +1,30 @@
+# Core utilities
+requests==2.32.3
+python-dotenv==1.0.1
+
+# AWS SDK (Fraud + SaaS infra)
+boto3==1.34.93
+botocore==1.34.93
+s3transfer==0.10.2
+jmespath==1.0.1
+
+# Data processing
+numpy==2.1.2
+pandas==2.2.3
+python-dateutil==2.9.0.post0
+six==1.16.0
+urllib3==2.2.3
+
+# Machine Learning (Fraud Detection)
+scikit-learn==1.5.2
+transformers==4.45.2
+sentence-transformers==3.1.1
+
+# PostgreSQL + Vector similarity (Fraud embeddings)
+psycopg==3.2.3
+psycopg-binary==3.2.3
+psycopg-pool==3.2.3
+pgvector==0.3.5
+
+# Kubernetes (ConfigMap + Namespace access)
+kubernetes==31.0.0
